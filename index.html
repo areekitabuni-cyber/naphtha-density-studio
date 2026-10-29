@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#173d36">
+<title>Naphtha Density Studio</title>
+<style>
+:root{--green:#1e5b4d;--dark:#173d36;--mint:#e8f2ed;--gold:#c59a51;--ink:#203630;--muted:#718079;--line:#dce7e0}
+*{box-sizing:border-box}
+body{margin:0;background:#f3f6f2;color:var(--ink);font:15px/1.6 system-ui,Arial,sans-serif}
+main{max-width:1000px;margin:auto;padding:24px}
+.hero{background:linear-gradient(125deg,#173d36,#397461);color:white;padding:34px;border-radius:22px}
+.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:11px;color:#d6e9dc;font-weight:800}
+h1{font-size:clamp(30px,5vw,46px);line-height:1.12;margin:12px 0}
+.hero p{color:#e0ebe4;max-width:620px}
+.tag{display:inline-block;border:1px solid #ffffff66;padding:5px 10px;border-radius:30px;font-size:11px}
+.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;margin-top:18px}
+.card{background:white;border:1px solid var(--line);border-radius:18px;padding:23px;box-shadow:0 6px 20px #18312e08}
+h2{font-size:19px;margin:0 0 5px}
+.muted{color:var(--muted);font-size:13px;margin-top:0}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{display:block;font-size:12px;font-weight:750;margin-bottom:6px}
+input,select{width:100%;padding:12px;border:1px solid #cddbd2;border-radius:10px;font:inherit;background:white;color:var(--ink)}
+.full{grid-column:1/-1}
+button{border:0;border-radius:10px;padding:12px 17px;font:inherit;font-weight:750;cursor:pointer}
+.primary{background:var(--green);color:white}
+.secondary{background:var(--mint);color:var(--green)}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}
+.result{margin-top:18px;padding:20px;border-radius:15px;background:var(--mint);border:1px solid #cfe0d5}
+.big{font-size:clamp(27px,4vw,38px);font-weight:850;color:var(--green);overflow-wrap:anywhere}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.stat{padding:11px;background:#ffffffc9;border:1px solid var(--line);border-radius:10px}
+.stat small{display:block;color:var(--muted)}
+.warn{background:#fff5df;border:1px solid #ead8ac;color:#604d29;padding:13px;border-radius:12px;font-size:12px;margin-top:15px}
+.formula{padding:14px;background:#f6f8f5;border-radius:12px;text-align:center;font-size:20px;margin-top:15px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tablewrap{overflow:auto}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:22px}
+@media(max-width:700px){main{padding:12px}.hero{padding:24px}.grid{grid-template-columns:1fr}.card{padding:17px}}
+@media(max-width:420px){.fields{grid-template-columns:1fr}.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+<div class="eyebrow">Petroleum Engineering · Learning Tool</div>
+<h1>Naphtha Density<br>Studio</h1>
+<p>A modern workspace for exploring liquid density, temperature correction and laboratory comparisons.</p>
+<span class="tag">EDUCATIONAL ESTIMATE · NOT AN APPROVED PROCESS INSTRUMENT</span>
+</header>
+
+<div class="grid">
+<section class="card">
+<h2>Density Calculator</h2>
+<p class="muted">Enter your process reading and reference temperature.</p>
+<div class="fields">
+<div><label for="density">Observed density</label><input id="density" type="number" step="any" value="668.3"></div>
+<div><label for="unit">Density unit</label><select id="unit"><option value="kg">kg/m³</option><option value="g">g/cm³</option></select></div>
+<div><label for="temp">Process temperature (°C)</label><input id="temp" type="number" step="any" value="57.9"></div>
+<div><label for="ref">Reference temperature</label><select id="ref"><option value="15">15°C</option><option value="20">20°C</option></select></div>
+<div class="full"><label for="alpha">Assumed expansion coefficient (per °C)</label><input id="alpha" type="number" step="any" min="0.000001" value="0.0013"><p class="muted">Illustrative assumption only. A suitable product-specific coefficient is required for a meaningful estimate.</p></div>
+<div class="full"><label for="lab">Laboratory density at reference temperature (optional, kg/m³)</label><input id="lab" type="number" step="any" placeholder="Enter lab result"></div>
+</div>
+<div class="actions"><button class="primary" id="calc">Calculate estimate ↗</button><button class="secondary" id="reset">Reset</button></div>
+<div id="output" aria-live="polite"></div>
+</section>
+
+<aside>
+<section class="card">
+<h2>How it works</h2>
+<p class="muted">Three simple steps</p>
+<p><b>01 — Measure</b><br><span class="muted">Record density and actual process temperature.</span></p>
+<p><b>02 — Select reference</b><br><span class="muted">Choose 15°C or 20°C as the comparison basis.</span></p>
+<p><b>03 — Compare</b><br><span class="muted">Compare the estimate with a laboratory result on the same basis.</span></p>
+<div class="formula">ρref ≈ ρobs × [1 + α(T − Tref)]</div>
+<p class="muted">Simplified linear approximation, not the official ASTM/API equation.</p>
+</section>
+<section class="card" style="margin-top:18px">
+<h2>Important for refinery use</h2>
+<div class="warn">The default coefficient is illustrative, not verified for your naphtha. Do not use this estimate for process control, custody transfer, certification or safety-critical decisions. Use your site's approved ASTM D1250 / API MPMS 11.1 method.</div>
+</section>
+</aside>
+</div>
+
+<section class="card" style="margin-top:18px">
+<h2>Calculation History</h2>
+<p class="muted">History stays in this browser session. Export a CSV copy for your records.</p>
+<div class="tablewrap"><table><thead><tr><th>Density kg/m³</th><th>Process °C</th><th>Reference °C</th><th>Estimate kg/m³</th></tr></thead><tbody id="history"><tr><td colspan="4">No calculations yet.</td></tr></tbody></table></div>
+<div class="actions"><button class="secondary" id="csv">Export CSV</button><button class="secondary" id="clear">Clear history</button></div>
+</section>
+<footer>Naphtha Density Studio · Educational use only · Verify industrial results with your approved site procedure.</footer>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+let records=[];
+const fmt=n=>Number(n.toPrecision(8)).toString();
+
+$('unit').addEventListener('change',()=>{
+ let d=Number($('density').value);
+ if(d>0)$('density').value=fmt($('unit').value==='g'?d/1000:d*1000);
+});
+
+$('calc').addEventListener('click',()=>{
+ let d=Number($('density').value);
+ const t=Number($('temp').value),r=Number($('ref').value),a=Number($('alpha').value);
+ if($('unit').value==='g')d*=1000;
+ if(!(d>0)||!Number.isFinite(t)||!(a>0)||!Number.isFinite(a)){
+  $('output').innerHTML='<div class="warn">Enter a valid positive density and coefficient, plus a valid temperature.</div>';return;
+ }
+ const result=d*(1+a*(t-r));
+ if(!(result>0)||!Number.isFinite(result)){
+  $('output').innerHTML='<div class="warn">Please check your input values.</div>';return;
+ }
+ const lab=Number($('lab').value);
+ const diff=lab>0?`<div class="stat"><small>Difference vs. lab</small><b>${fmt(result-lab)} kg/m³</b></div>`:'';
+ $('output').innerHTML=`<div class="result"><div class="muted">ESTIMATED DENSITY AT ${r}°C</div><div class="big">${fmt(result)} kg/m³</div><b>Approximate only</b><div class="stats"><div class="stat"><small>Observed density</small><b>${fmt(d)} kg/m³</b></div><div class="stat"><small>Temperature difference</small><b>${fmt(t-r)} °C</b></div><div class="stat"><small>Estimated correction</small><b>${fmt(result-d)} kg/m³</b></div><div class="stat"><small>Assumed coefficient</small><b>${fmt(a)} °C⁻¹</b></div>${diff}</div><div class="warn">Educational estimate only. This is not an official ASTM/API result.</div></div>`;
+ records.unshift({d,t,r,result,a});render();
+});
+
+function render(){
+ $('history').innerHTML=records.map(x=>`<tr><td>${fmt(x.d)}</td><td>${fmt(x.t)}</td><td>${x.r}</td><td>${fmt(x.result)}</td></tr>`).join('')||'<tr><td colspan="4">No calculations yet.</td></tr>';
+}
+$('reset').addEventListener('click',()=>{
+ $('density').value='668.3';$('unit').value='kg';$('temp').value='57.9';$('ref').value='15';$('alpha').value='0.0013';$('lab').value='';$('output').innerHTML='';
+});
+$('clear').addEventListener('click',()=>{records=[];render()});
+$('csv').addEventListener('click',()=>{
+ const rows=[['Observed density kg/m3','Process temperature C','Reference temperature C','Estimated density kg/m3','Assumed coefficient'],...records.map(x=>[x.d,x.t,x.r,x.result,x.a])];
+ const blob=new Blob([rows.map(row=>row.join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='naphtha-density-history.csv';a.click();URL.revokeObjectURL(url);
+});
+</script>
+</body>
+</html>
